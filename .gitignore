@@ -1,0 +1,36 @@
+# Generated synthetic data (regenerate locally)
+data/csv/
+*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Power BI
+*.pbix.bak
+~$*.pbix
+.pbi/
+
+# SQL Server
+*.bak
+*.ldf
+*.mdf
+
+# Output / temp
+output/
+temp/
+*.log
