@@ -139,7 +139,7 @@ anterior.
 
 ```bash
 # 1. Clonar
-git clone https://github.com/<tu-usuario>/sql-powerbi-portfolio.git
+git clone https://github.com/MatiasGarnica/sql-powerbi-portfolio.git
 cd sql-powerbi-portfolio
 
 # 2. Generar datos sintéticos
@@ -170,9 +170,8 @@ Instrucciones completas en [`data/README.md`](data/README.md).
 
 **Matías** — Analista de BI, Buenos Aires, Argentina
 
-- 💼 [LinkedIn](https://linkedin.com/in/tu-handle)
-- 📧 [Email](mailto:tu-email@example.com)
-- 🌐 [Portfolio](https://tu-sitio.com)
+- 💼 [LinkedIn](https://github.com/MatiasGarnica)
+- 📧 [Email](garnicamatias@outlook.es)
 
 ## Licencia
 
