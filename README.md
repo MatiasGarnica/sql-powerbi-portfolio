@@ -171,9 +171,8 @@ Full instructions in [`data/README.md`](data/README.md).
 
 **Matías** — BI Analyst, Buenos Aires, Argentina
 
-- 💼 [LinkedIn](https://linkedin.com/in/your-handle)
-- 📧 [Email](mailto:your-email@example.com)
-- 🌐 [Portfolio](https://your-website.com)
+- 💼 [LinkedIn](https://linkedin.com/in/MatiasGarnica)
+- 📧 [Email](mailto:garnicamatias@outlook.es)
 
 ## License
 
