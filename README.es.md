@@ -171,7 +171,7 @@ Instrucciones completas en [`data/README.md`](data/README.md).
 **Matías** — Analista de BI, Buenos Aires, Argentina
 
 - 💼 [LinkedIn](https://github.com/MatiasGarnica)
-- 📧 [Email](garnicamatias@outlook.es)
+- 📧 [Email](mailto:garnicamatias@outlook.es)
 
 ## Licencia
 
