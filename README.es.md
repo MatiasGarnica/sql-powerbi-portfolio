@@ -1,184 +1,171 @@
-# Portfolio SQL & Power BI — Analytics de distribuidora de agua
+# SQL · Power BI portfolio — Analytics de distribución de agua
 
-> Ecosistema BI end-to-end para una distribuidora de agua y soda en Argentina.
-> 14.000+ clientes activos, 500.000 pedidos al año, 8 regiones supervisadas.
-> Queries de SQL Server que automatizaron reportería manual, dashboards de Power BI
-> con medidas DAX custom — todo reproducible sobre datos sintéticos, sin exponer
-> información real de la empresa.
+Portfolio end-to-end de Business Intelligence construido sobre un dataset
+operativo realista modelado a partir de una empresa regional de distribución
+de agua. Demuestra T-SQL de calidad productiva, modelado en Power BI,
+medidas DAX y el razonamiento analítico detrás de cada reporte — no solo
+el código.
 
-[![SQL Server](https://img.shields.io/badge/SQL%20Server-2019+-CC2927?logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/en-us/sql-server)
-[![Power BI](https://img.shields.io/badge/Power%20BI-Desktop-F2C811?logo=powerbi&logoColor=black)](https://powerbi.microsoft.com)
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Tablero destacado — Cobranzas por Región](powerbi/screenshots/01_cobranzas_kpis.png)
 
-🌐 **[English version → README.md](README.md)**
+[![SQL Server](https://img.shields.io/badge/SQL_Server-2017+-CC2927?logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/en-us/sql-server)
+[![T-SQL](https://img.shields.io/badge/T--SQL-Avanzado-336791?logo=postgresql&logoColor=white)](https://learn.microsoft.com/en-us/sql/t-sql/language-reference)
+[![Power BI](https://img.shields.io/badge/Power_BI-Desktop-F2C811?logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
+[![DAX](https://img.shields.io/badge/DAX-Medidas-F2C811?logo=powerbi&logoColor=black)](powerbi/measures.dax)
+[![Licencia](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
+[![Made with Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](data/generate_synthetic_data.py)
+
+> 🇬🇧 [Read in English](README.md)
 
 ---
 
-## Contexto del negocio
+## Sobre este proyecto
 
-Trabajo como analista de BI en una distribuidora de agua y soda en el AMBA. La
-operación incluye:
+Este repositorio reproduce, en un entorno totalmente sintético, la
+infraestructura de BI de una operación regional de distribución de agua:
+14.000 clientes activos en 7 regiones, 24 meses de historia de pedidos,
+~500.000 transacciones, y una flota de dispensers de agua fría/calor
+trackeada individualmente.
 
-- **14.000+ clientes activos** en 4 segmentos: Hogar, Gastronomía, Empresa, Institucional
-- **230+ vendedores** distribuidos en 8 regiones con supervisor a cargo
-- **Dos modelos de facturación**: Contado (pago inmediato) y Cuenta Corriente (30/60/90 días)
-- **Equipos de Frío/Calor** instalados en el 18% de los clientes (modelo de alquiler)
+Cada query SQL fue diseñada contra la **base de datos real de producción**
+y luego adaptada cuidadosamente para esta versión sintética. Los dashboards
+de Power BI atacan decisiones operativas específicas que toman diariamente
+Tesorería, Operaciones, Marketing y la dirección comercial.
 
-Este repositorio contiene el trabajo de BI de los últimos 1-3 años: queries SQL
-que automatizaron tareas manuales de reportería, dashboards de Power BI usados por
-operaciones y finanzas, y la lógica dimensional detrás de los KPIs de adquisición,
-retención, riesgo financiero y performance operativa.
+**No se expone ningún dato productivo.** Un generador en Python construye
+el dataset completo desde cero (ver [`data/`](data/)), haciendo el portfolio
+completo reproducible sobre cualquier instancia de SQL Server.
+
+---
+
+## Qué hay adentro
+
+| Capa | Contenido | Archivos |
+|---|---|---|
+| **Datos sintéticos** | Generador reproducible + bulk loader de 21 tablas | [`data/`](data/) |
+| **Queries SQL** | 11 queries de calidad productiva en 8 módulos | [`sql/`](sql/) |
+| **Power BI** | 7 dashboards (11 páginas), medidas DAX, código M | [`powerbi/`](powerbi/) |
+| **Documentación** | Diccionario de datos, guías de técnicas | [`docs/`](docs/) |
+
+---
+
+## Módulos SQL — todos completos
+
+| # | Módulo | Query estrella | Técnicas |
+|---|---|---|---|
+| 01 | [Adquisición](sql/01_acquisition/) | `altas_digital_rto.sql` | `ROW_NUMBER`, `UNION ALL` de 4 bloques, clasificación de promos |
+| 02 | [Retención](sql/02_retention/) | `frio_calor_sin_consumo_60.sql` | State machine, `STUFF`+`FOR XML PATH`, priorización |
+| 03 | [Equipos F/C](sql/03_fc_equipment/) | `consumo_litros_por_cliente_fc.sql` | Lógica de vigencia temporal, ratios derivados |
+| 04 | [Riesgo Financiero](sql/04_financial_risk/) | `deuda_gastro_por_ruta.sql` | `UNION ALL` multi-fuente, separación contable |
+| 05 | [Segmentación](sql/05_segmentation/) | `clientes_barrios_cerrados.sql` | Pattern matching con `LIKE`, optimización con WHERE early |
+| 06 | [Performance Comercial](sql/06_sales_performance/) | `venta_mensual_por_comercial.sql` | SQL dinámico, doble `PIVOT`, temp tables con índices |
+| 07 | [Cobranzas](sql/07_collections/) | `cobranzas_mensuales_por_ruta.sql` | `OUTER APPLY`, parsing con `REVERSE`+`PATINDEX` |
+| 08 | [Operaciones Diarias](sql/08_daily_operations/) | `feriados_venta_a_recuperar.sql` | Alineación por día de semana, KPI consolidado |
+
+---
+
+## Dashboards destacados
+
+### Workflow de retención de equipos F/C
+
+Un reporte de workflow diario que reemplaza ~4 horas de trabajo manual en
+Excel con una query SQL de menos de 5 segundos. Para cada cliente con
+60+ días sin consumo, clasifica qué pasó este mes: volvió a comprar,
+le retiramos el equipo, sigue sin consumo, o quedó marcado como fugado.
+
+![F/C Sin Consumo](powerbi/screenshots/04_frio_calor_sin_consumo.png)
+
+→ [SQL fuente](sql/02_retention/frio_calor_sin_consumo_60.sql) · [Documentación del dashboard](powerbi/README.md#2--fc-equipment-retention-workflow)
+
+### Venta a recuperar por feriados
+
+Cuando un feriado interrumpe un día de reparto, este reporte cuantifica
+el monto de venta a recuperar el día hábil siguiente — por ruta,
+comparando lo efectivamente vendido el feriado contra el promedio
+semanal del mismo día de la semana.
+
+![Venta a Recuperar](powerbi/screenshots/06_feriados_venta_recuperar.png)
+
+→ [SQL fuente](sql/08_daily_operations/feriados_venta_a_recuperar.sql) · [Documentación del dashboard](powerbi/README.md#4--holiday-sales-recovery)
+
+### Altas de clientes por canal
+
+Diferencia las altas "vanity" (alta de registración alta, sin consumo
+posterior) de las altas reales (consumo sostenido) por ruta, semana,
+canal (Digital / Tradicional) y tipo de promo.
+
+![Altas RTO Digital](powerbi/screenshots/07_altas_rto_digital.png)
+
+→ [SQL fuente](sql/01_acquisition/altas_digital_rto.sql) · [Documentación del dashboard](powerbi/README.md#5--customer-acquisitions--rto--digital-2-pages)
+
+---
 
 ## Stack técnico
 
-| Capa | Tecnología | Uso |
-|---|---|---|
-| Base de datos | SQL Server (T-SQL) | CTEs, window functions, `OUTER APPLY`, SQL dinámico con `sp_executesql`, pivots |
-| Reportería | Power BI Desktop | Transformaciones M (Power Query), medidas DAX, drill-through, bookmarks |
-| Datos sintéticos | Python (Faker, pandas, numpy) | Dataset reproducible para uso público |
+```
+Origen        →  SQL Server 2017+
+Modelado      →  Star schema · 21 tablas (catálogos, ruteo, clientes, equipos, transacciones)
+ETL           →  Power Query M (parametrizado)
+Medidas       →  DAX (CALCULATE, FILTER, ALL, ADDCOLUMNS, TOPN, VAR/RETURN)
+Visualización →  Power BI Desktop + Service
+Gen. de datos →  Python 3.10+ (Faker, pandas, numpy)
+```
 
-## Privacidad de datos
-
-En este repositorio **nunca** se publican datos reales de la empresa. El código
-incluye un generador en Python que produce 21 tablas con integridad referencial,
-con exactamente el mismo esquema de producción pero con datos sintéticos:
-
-| | Real (privado) | Sintético (público) |
-|---|---|---|
-| Nombres de clientes | Personas y empresas reales | Faker (es-AR) |
-| Direcciones | Reales | Estilo argentino aleatorio |
-| CUIT | Reales | Formato válido pero ficticios |
-| Nombres de supervisores | Personas reales | "Supervisor Zona Norte/Sur/..." |
-| Marcas de equipos | Marcas reales | Etiquetas genéricas |
-| Códigos de procesos internos | Reales (`JOB 499`, etc.) | Genéricos (`JOB_FC`, `JOB_NC`) |
-| Métodos de cobranza | Nombres de proveedores reales | Códigos genéricos (`EFE`, `TRF`, `DIG`) |
-
-Ver [`data/README.md`](data/README.md) para el mapeo completo y setup.
+---
 
 ## Estructura del repositorio
 
 ```
 sql-powerbi-portfolio/
-├── data/                     Generador de datos sintéticos y loader de SQL Server
-├── sql/                      Queries de producción agrupadas por módulo de negocio
-│   ├── 01_acquisition/       Activación de nuevos clientes, primera compra
-│   ├── 02_retention/         Workflow de 60 días sin consumo, detección de recompra
-│   ├── 03_fc_equipment/      Productividad y consumo de equipos de F/C
-│   ├── 04_financial_risk/    Análisis de deuda por ruta y segmento
-│   ├── 05_segmentation/      Barrios cerrados, hogar vs empresa
-│   ├── 06_sales_performance/ Venta mensual por comercial, pivot histórico 24 meses
-│   ├── 07_collections/       Movimientos de tesorería, deuda, métodos de pago
-│   └── 08_daily_operations/  Recupero de feriados, comparativa diaria
-├── powerbi/                  Archivos del proyecto Power BI, medidas DAX, screenshots
-└── docs/                     Diccionario de datos, ERD, glosario de negocio
+├── data/                         Dataset sintético reproducible
+│   ├── generate_synthetic_data.py   ← Generador (Python)
+│   ├── load_to_sqlserver.sql        ← Bulk loader (T-SQL)
+│   └── README.md                    ← Instrucciones de setup
+├── sql/                          11 queries en 8 módulos
+│   ├── 01_acquisition/
+│   ├── 02_retention/
+│   ├── 03_fc_equipment/
+│   ├── 04_financial_risk/
+│   ├── 05_segmentation/
+│   ├── 06_sales_performance/
+│   ├── 07_collections/
+│   └── 08_daily_operations/
+├── powerbi/                      Dashboards, medidas, screenshots
+│   ├── README.md                    ← Catálogo de 7 dashboards
+│   ├── measures.dax                 ← 14 medidas DAX
+│   └── screenshots/                 ← 11 PNGs anonimizados
+├── docs/                         Referencia del modelo
+│   └── data_dictionary.md           ← Las 21 tablas documentadas
+├── README.md                     ← Espejo en inglés
+├── README.es.md                  ← Este archivo
+└── LICENSE                       ← MIT
 ```
-
-## Módulos analíticos
-
-### 1 · Adquisición de clientes
-Identifica clientes nuevos que efectivamente convirtieron (primera compra paga
-dentro de los 60 días del alta). Distingue canales: 2x1, prueba gratis, referido,
-digital. Alimenta los reportes semanales de KPIs de adquisición.
-
-**Técnicas:** `ROW_NUMBER()` sobre joins cliente-hecho, CASE multi-condición para
-clasificación de promos, OUTER APPLY para lookup de primera línea de producto.
-
-### 2 · Retención de clientes
-Detecta clientes con 60+ días sin consumo y enriquece cada caso con el *motivo*
-(recompró, retiraron el equipo, fugó, corrección interna) leyendo los eventos
-transaccionales posteriores. Reemplazó un proceso manual de Excel de 4 horas
-con una query de 15 segundos.
-
-**Técnicas:** máquina de estados con CASE complejo, `LEAD()`/`LAG()` para secuencias,
-composición multi-CTE.
-
-### 3 · Productividad de equipos F/C
-Tracking del parque instalado de dispensers, consumo mensual por modelo, y
-movimientos de alta/baja. Se usa para conciliación mensual de inventario.
-
-**Técnicas:** `OUTER APPLY` para último-evento-por-equipo, joins NULL-aware,
-joins con tabla calendario.
-
-### 4 · Riesgo financiero
-Aging de deuda por ruta combinando atrasos de contado y saldos de cuenta corriente.
-Marca exposición de cuentas grandes e identifica rutas con eficiencia de
-cobranza bajo umbral.
-
-**Técnicas:** `UNION ALL` de dos fuentes transaccionales, subqueries correlacionadas,
-window functions de aging.
-
-### 5 · Segmentación de clientes
-Parseo geográfico para identificar clientes en barrios cerrados (vía LIKE sobre
-`Direcc`), clasificación hogar vs empresa (vía atributos), targeting de gastronomía.
-
-**Técnicas:** CASE en capas, pattern matching, joins con tablas de atributos.
-
-### 6 · Performance de ventas
-Pivot de ventas mensuales por vendedor y producto sobre ventanas móviles de 24 meses,
-con generación dinámica de columnas vía `sp_executesql`. Alimenta el dashboard
-ejecutivo.
-
-**Técnicas:** SQL dinámico, operador `PIVOT`, agregación condicional.
-
-### 7 · Cobranzas
-Reportería mensual de tesorería por región, desglose por método de pago
-(efectivo, transferencia, digital, cheque, retención), aging de deuda.
-
-**Técnicas:** consolidación multi-fuente, joins dimensionales con métodos de pago,
-cálculos de saldo acumulado.
-
-### 8 · Operación diaria
-Análisis de recupero de feriados (compara la venta del mismo día de la semana
-anterior para estimar tasa de recupero por ruta), deltas día vs mismo día semana
-anterior.
-
-**Técnicas:** aritmética de fechas, grano vendedor-día, cálculo de tasa de recupero.
-
-## Quick start
-
-```bash
-# 1. Clonar
-git clone https://github.com/MatiasGarnica/sql-powerbi-portfolio.git
-cd sql-powerbi-portfolio
-
-# 2. Generar datos sintéticos
-pip install faker pandas numpy
-cd data
-python generate_synthetic_data.py
-
-# 3. Cargar a SQL Server (requiere SSMS)
-# Editar @csv_path en load_to_sqlserver.sql, después ejecutar en SSMS
-
-# 4. Correr cualquier query
-# Abrí cualquier .sql bajo sql/, las queries apuntan a [H2O_JUMI_DEMO].[dbo].[...]
-```
-
-Instrucciones completas en [`data/README.md`](data/README.md).
-
-## Insights del dataset sintético
-
-| Métrica | Valor |
-|---|---|
-| Días promedio del alta a primera compra paga (Gastronomía) | 12.9 |
-| Altas mensuales de Gastronomía concretadas | 25-30 |
-| Clientes con equipo F/C | 18% |
-| Tasa de promo en primera compra | 25% |
-| Ratio Contado vs Cta Cte | 78/22 |
-
-## Autor
-
-**Matías** — Analista de BI, Buenos Aires, Argentina
-
-- 💼 [LinkedIn](https://github.com/MatiasGarnica)
-- 📧 [Email](mailto:garnicamatias@outlook.es)
-
-## Licencia
-
-MIT — ver [LICENSE](LICENSE).
 
 ---
 
-*Este portfolio usa datos sintéticos exclusivamente. No incluye ni referencia
-información real de clientes, proveedores, empleados ni datos financieros
-de ninguna empresa.*
+## Inicio rápido
+
+```bash
+git clone https://github.com/MatiasGarnica/sql-powerbi-portfolio.git
+cd sql-powerbi-portfolio/data
+pip install faker pandas numpy
+python generate_synthetic_data.py
+```
+
+Después cargás en SQL Server con [`data/load_to_sqlserver.sql`](data/load_to_sqlserver.sql).
+Instrucciones detalladas en [`data/README.md`](data/README.md).
+
+---
+
+## Autor
+
+**Matías Garnica** — BI Analyst
+[LinkedIn](https://www.linkedin.com/in/garnicamatias) · [Email](mailto:garnicamatias@outlook.es)
+
+Disponible para oportunidades en Buenos Aires, Argentina o remoto.
+
+---
+
+## Licencia
+
+[MIT](LICENSE) — usá el código que quieras como referencia para tu propio portfolio.
