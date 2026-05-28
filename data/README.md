@@ -3,6 +3,11 @@
 This folder contains the reproducible synthetic dataset used by every SQL query
 in this repository. **No real company data lives here or anywhere else in the repo.**
 
+> **About the generator:** `generate_synthetic_data.py` was built with
+> AI assistance specifically to make the SQL/DAX work in this portfolio
+> reproducible by anyone. It is a utility for the demo environment, not
+> part of the production pipeline being showcased.
+
 ## Files
 
 | File | Purpose |
