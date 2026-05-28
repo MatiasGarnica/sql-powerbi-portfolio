@@ -4,10 +4,14 @@ Seven interactive reports built on top of the SQL queries in this repository,
 totaling 11 distinct report pages across operational, financial, and
 commercial domains.
 
-> **Privacy note:** brand marks, supervisor names, customer identifiers and
-> absolute revenue figures are blurred or redacted in every screenshot.
-> Visual structure, metric definitions, and layout decisions are preserved
-> unchanged so the design choices remain auditable.
+> **Source of these images:** screenshots are taken from the actual
+> production dashboards. Brand marks, supervisor names, customer
+> identifiers, and absolute revenue figures are blurred or redacted.
+> Visual structure, metric definitions, and layout decisions are
+> preserved unchanged so the design choices remain auditable. The
+> SQL queries, DAX measures and Power Query M code that produced
+> these visuals are included in this repo and execute against the
+> synthetic dataset in [`../data/`](../data/).
 
 ---
 
