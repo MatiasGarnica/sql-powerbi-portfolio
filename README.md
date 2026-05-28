@@ -12,7 +12,6 @@ each report — not just the code.
 [![Power BI](https://img.shields.io/badge/Power_BI-Desktop-F2C811?logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
 [![DAX](https://img.shields.io/badge/DAX-Measures-F2C811?logo=powerbi&logoColor=black)](powerbi/measures.dax)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Made with Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](data/generate_synthetic_data.py)
 
 > 🇪🇸 [Leer en español](README.es.md)
 
@@ -20,19 +19,24 @@ each report — not just the code.
 
 ## About this project
 
-This repository reproduces, in a fully synthetic environment, the BI
-infrastructure of a regional water-distribution operation: 14,000 active
-customers across 7 regions, 24 months of order history, ~500k transactions,
-and a fleet of cold/hot water dispensers tracked individually.
+This repository documents my work as Sr. Data Analyst at a regional
+water-distribution operation: the BI infrastructure I designed and maintain
+in production — 14,000 active customers across 7 regions, 24 months of
+order history, ~500k transactions, and a fleet of cold/hot water dispensers
+tracked individually.
 
-Every SQL query was designed against the **real production database** and
-then carefully adapted for this synthetic version. Power BI dashboards
-target specific operational decisions made daily by Treasury, Operations,
-Marketing, and Sales leadership.
+**What's real vs. demo:**
 
-**No production data is exposed.** A Python generator builds the full
-dataset from scratch (see [`data/`](data/)), making the entire portfolio
-reproducible on any SQL Server instance.
+- The **SQL queries, DAX measures, and Power Query M code** in this repo
+  are functional examples adapted from production. They are anonymized
+  (table names, column names, business rules, lookup codes) and run
+  against the synthetic dataset included in [`data/`](data/).
+- The **dashboard screenshots** are from the actual production reports,
+  with all confidential information (customer names, supervisor names,
+  brand marks, absolute revenue figures) redacted by blurring.
+- A **synthetic dataset generator** (AI-assisted, included for
+  reproducibility) lets anyone clone the repo and execute every query
+  locally — no production credentials or data required.
 
 ---
 
@@ -106,7 +110,6 @@ Modeling      →  Star schema · 21 tables (catalogs, routing, customers, equip
 ETL           →  Power Query M (parameterized)
 Measures      →  DAX (CALCULATE, FILTER, ALL, ADDCOLUMNS, TOPN, VAR/RETURN)
 Visualization →  Power BI Desktop + Service
-Data gen      →  Python 3.10+ (Faker, pandas, numpy)
 ```
 
 ---
@@ -159,8 +162,6 @@ Detailed instructions in [`data/README.md`](data/README.md).
 
 **Matías Garnica** — BI Analyst
 [LinkedIn](https://www.linkedin.com/in/garnicamatias) · [Email](mailto:garnicamatias@outlook.es)
-
-Available for opportunities in Buenos Aires, Argentina or remote.
 
 ---
 
